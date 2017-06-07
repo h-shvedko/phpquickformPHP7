@@ -14,7 +14,8 @@ class QuickFormInputsText extends A_QuickFormInputsFactoryPHP7
      * @param array $attributes
      * @param string $type
      */
-    public function __construct(string $name, array $attributes = [], string $type = '')
+//    public function __construct(string $name, array $attributes = [], string $type = '')
+    public function __construct(string $name, array $attributes, string $type)
     {
         if(A_QuickFormInputsFactoryPHP7::TYPE_HIDDEN == $type){
             $this->setType(self::TYPE_HIDDEN);

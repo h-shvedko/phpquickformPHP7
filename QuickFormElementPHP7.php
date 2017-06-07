@@ -542,7 +542,8 @@ class QuickFormElementPHP7
      * @param string $className
      * @param string $type
      */
-    private function getHtmlForInput(string $className, string $type = '')
+//    private function getHtmlForInput(string $className, string $type = '')
+    private function getHtmlForInput(string $className, string $type)
     {
         require_once 'Inputs/' . $className . '.php';
 

@@ -93,7 +93,7 @@ class QuickFormPHP7
     /**
      * @var null
      */
-    public $_currentSection= '';
+    public $_currentSection = '';
 
     /**
      * @var int
@@ -131,6 +131,67 @@ class QuickFormPHP7
     private $anonGroups = 1;
 
     /**
+     * @var string
+     */
+    private $formTemplate = '';
+
+    /**
+     * @var string
+     */
+    private $headerTemplate = '';
+
+    /**
+     * @var string
+     */
+    private $requiredNoteTemplate = '';
+
+    /**
+     * @var string
+     */
+    private $elementTemplate = '';
+
+    /**
+     * @var array
+     */
+    private $templates = [];
+
+    /**
+     * @var string
+     */
+    private $html = '';
+
+    /**
+     * @var string
+     */
+    private $startFormTemplate = '<form action="{action}" method="{method}" id="{id}" class="{class}" enctype="{enctype}" onsubmit="{onsubmit}">';
+
+    /**
+     * @var string
+     */
+    private $endFormTemplate = '</form>';
+
+    /**
+     * @var string
+     */
+    private $id = '';
+
+    /**
+     * @var string
+     */
+    private $class = '';
+
+    /**
+     * @var string
+     */
+    private $enctype = 'application/x-www-form-urlencoded';
+
+    /**
+     * @var string
+     */
+    private $onsubmit = '';
+
+
+    /**
      * QuickFormPHP7 constructor.
      * @param string $formName
      * @param string $method
@@ -139,7 +200,8 @@ class QuickFormPHP7
      * @param null|string $attributes
      * @param bool $trackSubmit
      */
-    public function __construct(string $formName, string $method = 'post', string $action = '', string $target = '', array $attributes = [], bool $trackSubmit = false)
+    public function __construct(string $formName, string $method, string $action, string $target, array $attributes, bool $trackSubmit)
+//    public function __construct(string $formName, string $method = 'post', string $action = '', string $target = '', string $attributes = '', bool $trackSubmit = false)
     {
         $this->method = (strtoupper($method) == 'GET') ? 'get' : 'post';
         $this->action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
@@ -357,6 +419,23 @@ class QuickFormPHP7
     public function setAttributes(array $attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
+
+        if(array_key_exists('id', $attributes) && !empty($attributes['id'])){
+            $this->setId($attributes['id']);
+        }
+
+        if(array_key_exists('class', $attributes) && !empty($attributes['class'])){
+            $this->setClass($attributes['class']);
+        }
+
+        if(array_key_exists('onsubmit', $attributes) && !empty($attributes['onsubmit'])){
+            $this->setOnsubmit($attributes['onsubmit']);
+        }
+
+        if(array_key_exists('enctype', $attributes) && !empty($attributes['enctype'])){
+            $this->setEnctype($attributes['enctype']);
+        }
+
     }
 
     /**
@@ -390,61 +469,61 @@ class QuickFormPHP7
      */
     public function updateElement(string $name, array $attributes)
     {
-        if(isset($this->elements[$name])){
-            if(isset($this->elements[$name]['attributes']) && is_array($this->elements[$name]['attributes'])){
+        if (isset($this->elements[$name])) {
+            if (isset($this->elements[$name]['attributes']) && is_array($this->elements[$name]['attributes'])) {
 
-                if(isset($attributes['value'])){
+                if (isset($attributes['value'])) {
                     $this->elements[$name]['value'] = $attributes['value'];
                     unset($attributes['value']);
                 }
 
-                if(isset($attributes['readonly'])){
+                if (isset($attributes['readonly'])) {
                     $this->elements[$name]['attributes']['readonly'] = $attributes['readonly'];
                     unset($attributes['readonly']);
                 }
 
-                if(isset($attributes['size'])){
+                if (isset($attributes['size'])) {
                     $this->elements[$name]['attributes']['size'] = $attributes['size'];
                     unset($attributes['size']);
                 }
 
-                if(isset($attributes['pattern'])){
+                if (isset($attributes['pattern'])) {
                     $this->elements[$name]['attributes']['pattern'] = $attributes['pattern'];
                     unset($attributes['pattern']);
                 }
 
-                if(isset($attributes['placeholder'])){
+                if (isset($attributes['placeholder'])) {
                     $this->elements[$name]['attributes']['placeholder'] = $attributes['placeholder'];
                     unset($attributes['placeholder']);
                 }
 
-                if(isset($attributes['required'])){
+                if (isset($attributes['required'])) {
                     $this->elements[$name]['required'] = $attributes['required'];
                     unset($attributes['required']);
                 }
 
-                if(isset($attributes['error'])){
+                if (isset($attributes['error'])) {
                     $this->elements[$name]['error'] = $attributes['error'];
                     unset($attributes['error']);
                 }
 
-                if(isset($attributes['frozen'])){
+                if (isset($attributes['frozen'])) {
                     $this->elements[$name]['frozen'] = $attributes['frozen'];
                     unset($attributes['frozen']);
                 }
 
-                if(isset($attributes['html'])){
+                if (isset($attributes['html'])) {
                     $this->elements[$name]['html'] = $attributes['html'];
                     unset($attributes['html']);
                 }
 
-                if(isset($attributes['label'])){
+                if (isset($attributes['label'])) {
                     $this->elements[$name]['label'] = $attributes['label'];
                     unset($attributes['label']);
                 }
 
-                foreach($attributes as $nameAttr => $value){
-                    if(isset($this->elements[$name]['attributes'][$nameAttr])){
+                foreach ($attributes as $nameAttr => $value) {
+                    if (isset($this->elements[$name]['attributes'][$nameAttr])) {
                         unset($this->elements[$name]['attributes'][$nameAttr]);
                     }
                     $this->elements[$name]['attributes'][$nameAttr] = $value;
@@ -458,10 +537,9 @@ class QuickFormPHP7
     /**
      *
      */
-    public function accept()//TODO: check if we need this method
+    public function accept()
     {
         $this->startForm();
-        //$this->render(); //TODO: render elements of form
     }
 
     /**
@@ -490,6 +568,8 @@ class QuickFormPHP7
         $this->elements[$name][self::ELEMENTS] = $element->toArray($element->getElements());
 
         $this->setLastElement($element);
+
+        $this->setHtml($this->elements[$name][self::HTML]);
     }
 
     /**
@@ -648,10 +728,10 @@ class QuickFormPHP7
      */
     private function checkResetForGroup(string $type, array $attributes)
     {
-        if(isset($attributes['reset']) && $type == 'group'){
-            if(!empty($this->elements)){
-                foreach($this->elements as $key => $element){
-                    if(isset($element['type']) && $element['type'] != 'group'){
+        if (isset($attributes['reset']) && $type == 'group') {
+            if (!empty($this->elements)) {
+                foreach ($this->elements as $key => $element) {
+                    if (isset($element['type']) && $element['type'] != 'group') {
                         unset($this->elements[$key]);
                     }
                 }
@@ -665,5 +745,224 @@ class QuickFormPHP7
     public function setFrozen(bool $freezeAll)
     {
         $this->_freezeAll = $freezeAll;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormTemplate()//TODO //: string
+    {
+        return $this->formTemplate;
+    }
+
+    /**
+     * @param string $formTemplate
+     */
+    public function setFormTemplate(string $formTemplate)
+    {
+        $this->formTemplate = $formTemplate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHeaderTemplate()//TODO //: string
+    {
+        return $this->headerTemplate;
+    }
+
+    /**
+     * @param string $headerTemplate
+     */
+    public function setHeaderTemplate(string $headerTemplate)
+    {
+        $this->headerTemplate = $headerTemplate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequiredNoteTemplate()//TODO //: string
+    {
+        return $this->requiredNoteTemplate;
+    }
+
+    /**
+     * @param string $requiredNoteTemplate
+     */
+    public function setRequiredNoteTemplate(string $requiredNoteTemplate)
+    {
+        $this->requiredNoteTemplate = $requiredNoteTemplate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getElementTemplate()//TODO //: string
+    {
+        return $this->elementTemplate;
+    }
+
+    /**
+     * @param string $elementTemplate
+     * @param string $element
+     */
+    public function setElementTemplate(string $elementTemplate, string $element = null)
+    {
+        if (is_null($element)) {
+            $this->elementTemplate = $elementTemplate;
+        } else {
+            $this->templates[$element] = $elementTemplate;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getTemplates()//TODO //: array
+    {
+        return $this->templates;
+    }
+
+    public function clearAllTemplates()
+    {
+        $this->setTemplates([]);
+        $this->setElementTemplate('');
+        $this->setFormTemplate('');
+        $this->setHeaderTemplate('');
+        $this->setRequiredNoteTemplate('');
+
+    }
+
+    /**
+     * @param array $templates
+     */
+    public function setTemplates(array $templates)
+    {
+        $this->templates = $templates;
+    }
+
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        $html = '';
+        $html = sprintf("%s %s", $html, $this->getStartFormTemplate());
+        $html = sprintf("%s %s", $html, $this->getHtml());
+        $html = sprintf("%s %s", $html, $this->getEndFormTemplate());
+
+        return $html;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHtml()//TODO //: string
+    {
+        return $this->html;
+    }
+
+    /**
+     * @param string $html
+     */
+    public function setHtml(string $html)
+    {
+        $this->html = sprintf("%s %s", $this->html, $html);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartFormTemplate()//TODO //: string
+    {
+        $this->replaceFormValues();
+        return $this->startFormTemplate;
+    }
+
+    /**
+     * @param string $startFormTemplate
+     */
+    public function setStartFormTemplate(string $startFormTemplate)
+    {
+        $this->startFormTemplate = $startFormTemplate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndFormTemplate()//TODO //: string
+    {
+        return $this->endFormTemplate;
+    }
+
+    private function replaceFormValues()
+    {
+        $startFormTemplate = str_replace(['{action}', '{method}','{id}', '{class}', '{enctype}', '{onsubmit}'], [$this->action, $this->method, $this->id, $this->class, $this->enctype, $this->onsubmit], $this->getStartFormTemplate());
+        $this->setStartFormTemplate($startFormTemplate);
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()//TODO //: string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClass()//TODO //: string
+    {
+        return $this->class;
+    }
+
+    /**
+     * @param string $class
+     */
+    public function setClass(string $class)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnctype()//TODO //: string
+    {
+        return $this->enctype;
+    }
+
+    /**
+     * @param string $enctype
+     */
+    public function setEnctype(string $enctype)
+    {
+        $this->enctype = $enctype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOnsubmit()//TODO //: string
+    {
+        return $this->onsubmit;
+    }
+
+    /**
+     * @param string $onsubmit
+     */
+    public function setOnsubmit(string $onsubmit)
+    {
+        $this->onsubmit = $onsubmit;
     }
 }
