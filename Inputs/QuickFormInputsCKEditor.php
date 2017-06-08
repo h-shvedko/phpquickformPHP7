@@ -124,6 +124,14 @@ class QuickFormInputsCKEditor extends A_QuickFormInputsFactoryPHP7
         $this->setType(self::TYPE_FCKEDITOR);
 
         $this->setName($name);
+
+        if(isset($attributes['name'])){
+            if($this->getName() != $attributes['name']){
+                $this->setValue($attributes['name']);
+            }
+            unset($attributes['name']);
+        }
+
         $this->setNameInAttributes($name);
 
         if(isset($attributes['requestAttributes']) && is_array($attributes['requestAttributes'])){

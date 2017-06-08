@@ -907,7 +907,7 @@ class QuickFormPHP7
 
     private function replaceFormValues()
     {
-        $startFormTemplate = str_replace(['{action}', '{method}','{id}', '{class}', '{enctype}', '{onsubmit}'], [$this->action, $this->method, $this->id, $this->class, $this->enctype, $this->onsubmit], $this->getStartFormTemplate());
+        $startFormTemplate = str_replace(['{action}', '{method}','{id}', '{class}', '{enctype}', '{onsubmit}'], [$this->action, $this->method, $this->id, $this->class, $this->enctype, $this->onsubmit], $this->startFormTemplate);
 //        $this->setStartFormTemplate($startFormTemplate);
 
         return $startFormTemplate;

@@ -19,6 +19,13 @@ class QuickFormInputsPassword extends A_QuickFormInputsFactoryPHP7
 
         $this->setName($name);
 
+        if(isset($attributes['name'])){
+            if($this->getName() != $attributes['name']){
+                $this->setValue($attributes['name']);
+            }
+            unset($attributes['name']);
+        }
+
         if (isset($attributes['value'])) {
             $this->setValue($attributes['value']);
             unset($attributes['value']);
@@ -72,11 +79,21 @@ class QuickFormInputsPassword extends A_QuickFormInputsFactoryPHP7
         }
 
         $html = sprintf('%s name="%s"', $html, $this->getName());
-        $html = sprintf('%s readonly="%s"', $html, $this->getReadonly());
+        if($this->getReadonly()){
+            $html = sprintf('%s readonly="%s"', $html, $this->getReadonly());
+        }
+
         $html = sprintf('%s placeholder="%s"', $html, $this->getPlaceholder());
-        $html = sprintf('%s pattern="%s"', $html, $this->getPattern());
-        $html = sprintf('%s size="%d"', $html, $this->getSize());
-        $html = sprintf('%s %s', $html, ($this->isRequired()) ? "required" : null);
+
+        if(!empty($this->getPattern())){
+            $html = sprintf('%s pattern="%s"', $html, $this->getPattern());
+        }
+
+        if($this->getSize() > 0){
+            $html = sprintf('%s size="%d"', $html, $this->getSize());
+        }
+
+        $html = sprintf('%s %s', $html, ($this->isRequired())? "required": null);
 
         $this->generateAttributes();
         $attributes = $this->getLineWithAttributes();

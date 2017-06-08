@@ -533,6 +533,9 @@ class QuickFormElementPHP7
             case A_QuickFormInputsFactoryPHP7::TYPE_FCKEDITOR:
                 $this->getHtmlForInput('QuickFormInputsCKEditor');
                 break;
+            case A_QuickFormInputsFactoryPHP7::TYPE_EMAIL:
+                $this->getHtmlForInput('QuickFormInputsEmail');
+                break;
             default:
                 break;
         }

@@ -245,7 +245,7 @@ abstract class A_QuickFormInputsFactoryPHP7
      */
     public function setValue(string $value)
     {
-        if ($this->getType() == self::TYPE_TEXT || $this->getType() == self::TYPE_PASSWORD || $this->getType() == self::TYPE_HIDDEN || $this->getType() == self::TYPE_SELECT || $this->getType() == self::TYPE_BUTTON) {
+        if ($this->getType() == self::TYPE_TEXT || $this->getType() == self::TYPE_PASSWORD || $this->getType() == self::TYPE_HIDDEN || $this->getType() == self::TYPE_SELECT || $this->getType() == self::TYPE_BUTTON || $this->getType() == self::TYPE_SUBMIT) {
             $this->value = $value;
         }
     }

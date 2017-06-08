@@ -19,6 +19,13 @@ class QuickFormInputsFile extends A_QuickFormInputsFactoryPHP7
 
         $this->setName($name);
 
+        if(isset($attributes['name'])){
+            if($this->getName() != $attributes['name']){
+                $this->setValue($attributes['name']);
+            }
+            unset($attributes['name']);
+        }
+
         if (isset($attributes['value'])) {
             $this->setValue($attributes['value']);
             unset($attributes['value']);
