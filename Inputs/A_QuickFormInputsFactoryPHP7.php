@@ -22,6 +22,7 @@ abstract class A_QuickFormInputsFactoryPHP7
     const TYPE_RADIO = 'radio';
     const TYPE_RESET = 'reset';
     const TYPE_TEXT = 'text';
+    const TYPE_EMAIL = 'email';
     const TYPE_SUBMIT = 'submit';
     const TYPE_SELECT = 'select';
     const TYPE_FCKEDITOR = 'fckeditor';

@@ -551,6 +551,14 @@ class QuickFormPHP7
     }
 
     /**
+     * @param array $elements
+     */
+    public function setElements(array $elements)
+    {
+        $this->elements = $elements;
+    }
+
+    /**
      * @param QuickFormElementPHP7 $element
      */
     public function setElement(QuickFormElementPHP7 $element)
@@ -876,7 +884,8 @@ class QuickFormPHP7
      */
     public function getStartFormTemplate()//TODO //: string
     {
-        $this->replaceFormValues();
+        $template = $this->replaceFormValues();
+        $this->startFormTemplate = $template;
         return $this->startFormTemplate;
     }
 
@@ -899,7 +908,9 @@ class QuickFormPHP7
     private function replaceFormValues()
     {
         $startFormTemplate = str_replace(['{action}', '{method}','{id}', '{class}', '{enctype}', '{onsubmit}'], [$this->action, $this->method, $this->id, $this->class, $this->enctype, $this->onsubmit], $this->getStartFormTemplate());
-        $this->setStartFormTemplate($startFormTemplate);
+//        $this->setStartFormTemplate($startFormTemplate);
+
+        return $startFormTemplate;
     }
 
     /**
@@ -964,5 +975,109 @@ class QuickFormPHP7
     public function setOnsubmit(string $onsubmit)
     {
         $this->onsubmit = $onsubmit;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubmitFiles()//TODO //: array
+    {
+        return $this->_submitFiles;
+    }
+
+    /**
+     * @param array $submitFiles
+     */
+    public function setSubmitFiles(array $submitFiles)
+    {
+        $this->_submitFiles = $submitFiles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubmitValues()//TODO //: array
+    {
+        return $this->_submitValues;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getSubmitValue(string $name)//TODO //: string
+    {
+        return isset($this->_submitValues[$name]) ? $this->_submitValues[$name] : '';
+    }
+
+    /**
+     * @param array $submitValues
+     */
+    public function setSubmitValues(array $submitValues)
+    {
+        $this->_submitValues = $submitValues;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxFileSize()//TODO //: int
+    {
+        return $this->_maxFileSize;
+    }
+
+    /**
+     * @param int $maxFileSize
+     */
+    public function setMaxFileSize(int $maxFileSize)
+    {
+        $this->_maxFileSize = $maxFileSize;
+    }
+
+    /**
+     * @param string $name
+     * @param string $error
+     */
+    public function setElementError(string $name, string $error)
+    {
+        $this->form['errors'][$name] = $error;
+    }
+
+    /**
+     * @param QuickFormPHP7 $element
+     * @param string $name
+     */
+    public function insertElementBefore(QuickFormPHP7 $element, string $name)
+    {
+        $position = array_search($name, array_keys($this->getElements()));
+
+        $elementArray = $this->getArrayFromElement($element);
+
+        $this->setHtml($elementArray[$name][self::HTML]);
+
+        $array = array_merge(array_slice($this->getElements(), 0, $position), $elementArray, array_slice($this->getElements(), $position));
+
+        $this->setElements($array);
+    }
+
+    /**
+     * @param QuickFormPHP7 $element
+     * @return mixed
+     */
+    private function getArrayFromElement(QuickFormPHP7 $element)
+    {
+        $name = $element->getName();
+        $array[$name][self::NAME] = $name;
+        $array[$name][self::TYPE] = $element->getType();
+        $array[$name][self::VALUE] = $element->getValue();
+        $array[$name][self::LABEL] = $element->getLabel();
+        $array[$name][self::HTML] = $element->getHtml();
+        $array[$name][self::REQUIRED] = $element->isRequired();
+        $array[$name][self::FROZEN] = $element->isFrozen();
+        $array[$name][self::ATTRIBUTES] = $element->getAttributes();
+        $array[$name][self::ERROR] = $element->getError();
+        $array[$name][self::ELEMENTS] = $element->toArray($element->getElements());
+
+        return $array;
     }
 }
