@@ -203,9 +203,9 @@ class QuickFormPHP7
 //    public function __construct(string $formName, string $method, string $action, string $target, array $attributes, bool $trackSubmit)//only for PHP version < 7.0.0
     public function __construct(string $formName, string $method = 'post', string $action = '', string $target = '', array $attributes = [], bool $trackSubmit = false)//only for PHP version >= 7.0.0
     {
-        $this->method = (strtoupper($method) == 'GET') ? 'get' : 'post';
-        $this->action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
-        $this->target = empty($target) ? array() : array('target' => $target);
+        $this->setMethod((strtoupper($method) == 'GET') ? 'get' : 'post');
+        $this->setAction(($action == '') ? $_SERVER['PHP_SELF'] : $action);
+        $this->setTarget(empty($target) ? array() : array('target' => $target));
         $this->setAttributes($attributes);
 
         if (!$trackSubmit || isset($_REQUEST['_qf__' . $formName])) {
@@ -865,7 +865,7 @@ class QuickFormPHP7
     public function getStartFormTemplate()//TODO //: string
     {
         $template = $this->replaceFormValues();
-        $this->startFormTemplate = $template;
+        $this->setStartFormTemplate($template);
         return $this->startFormTemplate;
     }
 
@@ -1026,15 +1026,20 @@ class QuickFormPHP7
      * @param QuickFormPHP7 $element
      * @param string $name
      */
-    public function insertElementBefore(QuickFormPHP7 $element, string $name)
+    public function insertElementBefore(QuickFormElementPHP7 $element, string $name)
     {
         $position = array_search($name, array_keys($this->getElements()));
 
         $elementArray = $this->getArrayFromElement($element);
 
-        $this->setHtml($elementArray[$name][self::HTML]);
+        $nameOfNewElement = $element->getName();
+        if(array_search($nameOfNewElement, array_keys($this->getElements())) !== false){
+            unset($this->elements[$nameOfNewElement]);
+        }
 
-        $array = array_merge(array_slice($this->getElements(), 0, $position), $elementArray, array_slice($this->getElements(), $position));
+        $this->setHtml($elementArray[$nameOfNewElement][self::HTML]);
+
+        $array = array_slice($this->getElements(), 0, $position) + $elementArray + array_slice($this->getElements(), $position);
 
         $this->setElements($array);
     }
@@ -1043,7 +1048,7 @@ class QuickFormPHP7
      * @param QuickFormPHP7 $element
      * @return mixed
      */
-    private function getArrayFromElement(QuickFormPHP7 $element)
+    private function getArrayFromElement(QuickFormElementPHP7 $element)
     {
         $name = $element->getName();
         $array[$name][self::NAME] = $name;
@@ -1058,5 +1063,53 @@ class QuickFormPHP7
         $array[$name][self::ELEMENTS] = $element->toArray($element->getElements());
 
         return $array;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAction()//TODO //: string
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param string $action
+     */
+    public function setAction(string $action)
+    {
+        $this->action = $action;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethod()//TODO //: string
+    {
+        return $this->method;
+    }
+
+    /**
+     * @param string $method
+     */
+    public function setMethod(string $method)
+    {
+        $this->method = $method;
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    /**
+     * @param array|string $target
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
     }
 }
