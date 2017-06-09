@@ -14,8 +14,8 @@ class QuickFormInputsEmail extends A_QuickFormInputsFactoryPHP7
      * @param array $attributes
      * @param string $type
      */
-//    public function __construct(string $name, array $attributes = [], string $type = '')
-    public function __construct(string $name, array $attributes, string $type)
+    public function __construct(string $name, array $attributes = [], string $type = '')//only for PHP version >= 7.0.0
+//    public function __construct(string $name, array $attributes, string $type)//only for PHP version < 7.0.0
     {
         $this->setType(self::TYPE_EMAIL);
 

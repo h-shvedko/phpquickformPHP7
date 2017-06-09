@@ -18,7 +18,7 @@ class QuickFormInputsSelectTest extends TestCase
     protected static $testSuccessIndexOfArray = 'label';
     protected static $testFailedIndexOfArray = 'fail';
     protected static $nameOfElement = 'testName';
-    protected static $attributes = ['name' => 'testName', 'label' => 'TestAttribute'];
+    protected static $attributes = ['name' => 'testName', 'label' => 'TestAttribute', 'class' => 'testAttribute'];
     protected static $newValueOfAttribute = 'TestNewAttribute';
     protected static $html = '<div>Test HTML</div>';
     protected static $templateStart = '<select';

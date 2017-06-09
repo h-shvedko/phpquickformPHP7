@@ -200,8 +200,8 @@ class QuickFormPHP7
      * @param null|string $attributes
      * @param bool $trackSubmit
      */
-    public function __construct(string $formName, string $method, string $action, string $target, array $attributes, bool $trackSubmit)
-//    public function __construct(string $formName, string $method = 'post', string $action = '', string $target = '', string $attributes = '', bool $trackSubmit = false)
+//    public function __construct(string $formName, string $method, string $action, string $target, array $attributes, bool $trackSubmit)//only for PHP version < 7.0.0
+    public function __construct(string $formName, string $method = 'post', string $action = '', string $target = '', array $attributes = [], bool $trackSubmit = false)//only for PHP version >= 7.0.0
     {
         $this->method = (strtoupper($method) == 'GET') ? 'get' : 'post';
         $this->action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
@@ -451,7 +451,6 @@ class QuickFormPHP7
      * @param array $attributes
      * @param array $error
      */
-//    public function addElement(string $name, string $type, string $value = '', string $label = '', string $html = '', bool $required = false, bool $frozen = false, array $attributes = [], array $error = [])//TODO: only for PHP7, it doesn't work on PHP5(type hinting issue)
     public function addElement(string $type, array $attributes = [], array $error = [])
     {
         $element = new QuickFormElementPHP7($this);
@@ -695,25 +694,6 @@ class QuickFormPHP7
         $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][strtolower($typeName)] = [$include, $className];
     }
 
-//    /**
-//     * @param array $elements
-//     * @param string $name
-//     * @param string $groupLabel
-//     * @param string $separator
-//     * @param bool $appendName
-//     */
-//    public function addGroup(array $elements, string $name, string $groupLabel, string $separator, bool $appendName)
-//    {
-//        $anonGroups = $this->getAnonGroups();
-//
-//        if (0 == strlen($name)) {
-//            $name = 'qf_group_' . $this->setAnonGroups($anonGroups++);
-//            $appendName = false;
-//        }
-//        //TODO: create group of elements - generate all elements as html-code and pass it to html-attribute of group
-////        $group = $this->addElement('group', ['name' => $name, 'label' => $groupLabel, $elements, 'sep' => $separator]);
-//    }
-
     /**
      * @return int
      */
@@ -908,7 +888,6 @@ class QuickFormPHP7
     private function replaceFormValues()
     {
         $startFormTemplate = str_replace(['{action}', '{method}','{id}', '{class}', '{enctype}', '{onsubmit}'], [$this->action, $this->method, $this->id, $this->class, $this->enctype, $this->onsubmit], $this->startFormTemplate);
-//        $this->setStartFormTemplate($startFormTemplate);
 
         return $startFormTemplate;
     }

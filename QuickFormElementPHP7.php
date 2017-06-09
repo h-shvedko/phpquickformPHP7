@@ -273,17 +273,6 @@ class QuickFormElementPHP7
         $this->value = $value;
     }
 
-//    /**
-//     *
-//     */
-//    private function loadElement()//TODO: check if we need this method
-//    {
-//        $elementName = $this->getName();
-//        $this->_elements[$elementName] = $this->getElement();
-//        $elKeys = array_keys($this->_elements);
-//        $this->_elementIndex[$elementName] = end($elKeys);
-//    }
-
     /**
      * @return mixed
      */
@@ -404,22 +393,6 @@ class QuickFormElementPHP7
     {
         $this->type = $type;
     }
-
-//    /**
-//     * @return array
-//     */
-//    private function getElement()//TODO //: array
-//    {
-//        $element = [];
-//        $element[self::LABEL] = $this->getLabel();
-//        $element[self::TEXT] = $this->getAttributeValueByName(self::TEXT);
-//        $element[self::TYPE] = $this->getType();
-//        $element[self::ATTRIBUTES] = $this->getAttributes();
-//
-//        $this->setLastElement($element);
-//
-//        return $element;
-//    }
 
     /**
      * @return string
@@ -545,8 +518,8 @@ class QuickFormElementPHP7
      * @param string $className
      * @param string $type
      */
-//    private function getHtmlForInput(string $className, string $type = '')
-    private function getHtmlForInput(string $className, string $type)
+    private function getHtmlForInput(string $className, string $type = '')
+//    private function getHtmlForInput(string $className, string $type)
     {
         require_once 'Inputs/' . $className . '.php';
 
