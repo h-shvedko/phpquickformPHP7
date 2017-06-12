@@ -1037,11 +1037,11 @@ class QuickFormPHP7
             unset($this->elements[$nameOfNewElement]);
         }
 
-        $this->setHtml($elementArray[$nameOfNewElement][self::HTML]);
-
         $array = array_slice($this->getElements(), 0, $position) + $elementArray + array_slice($this->getElements(), $position);
 
         $this->setElements($array);
+
+        $this->reGenerateHtml();
     }
 
     /**
@@ -1111,5 +1111,25 @@ class QuickFormPHP7
     public function setTarget($target)
     {
         $this->target = $target;
+    }
+
+    /**
+     * Regenerating of HTML of form in case of changing order of elements in form
+     */
+    private function reGenerateHtml()
+    {
+        $this->resetHtml();
+
+        foreach($this->getElements() as $key => $element){
+            $this->setHtml($element['html']);
+        }
+    }
+
+    /**
+     * Reset html value to empty string
+     */
+    private function resetHtml()
+    {
+        $this->html = '';
     }
 }
