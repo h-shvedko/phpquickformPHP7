@@ -8,8 +8,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once '/tests/bootstrap.php';
-
 class QuickFormInputsImageTest extends TestCase
 {
     protected static $quickFormInputsImageInstance = null;
