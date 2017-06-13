@@ -9,4 +9,5 @@ $form->addElement('html', ['html' => '<h1>Hello world!!!!</h1>']);
 $output = $form->render();
 
 echo $output;
+
 die;
