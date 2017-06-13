@@ -8,7 +8,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once '/tests/bootstrap.php';
+require_once '../bootstrap.php';
 
 class QuickFormElementPHP7Test extends TestCase
 {
