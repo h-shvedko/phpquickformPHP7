@@ -140,18 +140,22 @@ class QuickFormInputsSelect extends A_QuickFormInputsFactoryPHP7
         $attributes = $this->getAttributes();
 
         if(isset($attributes['options'])){
-            foreach($attributes['options'] as $name => $value){
+            foreach($attributes['options'] as $value => $label){
                 $html = sprintf('%s %s', $html, '<option');
-                $html = sprintf('%s value="%s"', $html, $name);
+                $html = sprintf('%s value="%s"', $html, $value);
 
-                if(!isset($this->getAttributes()['multiple']) || (isset($this->getAttributes()['multiple']) && $this->getAttributes()['multiple'] == 'multiple')){
-                   if($name == $this->getDefaultValue() || $name == $this->getValue()){
+                if(!isset($this->getAttributes()['multiple'])){
+                   if($value == $this->getValue()){
+                        $html = sprintf('%s %s', $html, 'selected="selected"');
+                   }
+                } else if((isset($this->getAttributes()['multiple']) && $this->getAttributes()['multiple'] == 'multiple')){
+                    if($this->checkDefaultMultipleValue($value)){
                         $html = sprintf('%s %s', $html, 'selected="selected"');
                     }
                 }
 
                 $html = sprintf('%s %s', $html, '>');
-                $html = sprintf('%s %s', $html, htmlspecialchars($value));
+                $html = sprintf('%s %s', $html, htmlspecialchars($label));
                 $html = sprintf('%s %s', $html, '</option>');
             }
             unset($attributes['options']);
@@ -183,10 +187,11 @@ class QuickFormInputsSelect extends A_QuickFormInputsFactoryPHP7
     private function checkDefaultMultipleValue(string $searchValue)
     {
         $res = false;
-        $defaults = $this->getAttributes()['defaults'];
+        $attributes = $this->getAttributes();
+        $defaults = isset($attributes['defaults']) ? $attributes['defaults'] : '';
         if(is_array($defaults)){
             foreach ($defaults as $key => $value){
-                if($this->getName() == $key){
+                if($this->getName() == $key . '[]'){
                     if(is_array($value)){
                         foreach($value as $item => $defValue){
                             if($defValue == $searchValue){

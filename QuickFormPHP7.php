@@ -290,7 +290,6 @@ class QuickFormPHP7
      */
     private function startForm()
     {
-        //TODO
         $this->form = [
             'frozen' => $this->isFrozen(),
             'javascript' => $this->getValidationScript(),
@@ -319,89 +318,7 @@ class QuickFormPHP7
     public function getValidationScript()
     {
         //TODO  create generation of validation script
-        /*
-        if (empty($this->_rules) || empty($this->_attributes['onsubmit'])) {
-            return '';
-        }
 
-        include_once('HTML/QuickForm/RuleRegistry.php');
-        $registry =& HTML_QuickForm_RuleRegistry::singleton();
-        $test = array();
-        $js_escape = array(
-            "\r"    => '\r',
-            "\n"    => '\n',
-            "\t"    => '\t',
-            "'"     => "\\'",
-            '"'     => '\"',
-            '\\'    => '\\\\'
-        );
-
-        foreach ($this->_rules as $elementName => $rules) {
-            foreach ($rules as $rule) {
-                if ('client' == $rule['validation']) {
-                    unset($element);
-
-                    $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
-                    $rule['message'] = strtr($rule['message'], $js_escape);
-
-                    if (isset($rule['group'])) {
-                        $group    =& $this->getElement($rule['group']);
-                        // No JavaScript validation for frozen elements
-                        if ($group->isFrozen()) {
-                            continue 2;
-                        }
-                        $elements =& $group->getElements();
-                        foreach (array_keys($elements) as $key) {
-                            if ($elementName == $group->getElementName($key) || $rule['group'].'['.$elementName.']' == $group->getElementName($key)) {
-                                $element =& $elements[$key];
-                                break;
-                            }
-                        }
-                    } elseif ($dependent) {
-                        $element   =  array();
-                        $element[] =& $this->getElement($elementName);
-                        foreach ($rule['dependent'] as $idx => $elName) {
-                            $element[] =& $this->getElement($elName);
-                        }
-                    } else {
-                        $element =& $this->getElement($elementName);
-                    }
-                    // No JavaScript validation for frozen elements
-                    if (is_object($element) && $element->isFrozen()) {
-                        continue 2;
-                    } elseif (is_array($element)) {
-                        foreach (array_keys($element) as $key) {
-                            if ($element[$key]->isFrozen()) {
-                                continue 3;
-                            }
-                        }
-                    }
-
-                    $test[] = $registry->getValidationScript($element, $elementName, $rule);
-                }
-            }
-        }
-        if (count($test) > 0) {
-            return
-                "\n<script type=\"text/javascript\">\n" .
-                "//<![CDATA[\n" .
-                "function validate_" . $this->_attributes['id'] . "(frm) {\n" .
-                "  var value = '';\n" .
-                "  var errFlag = new Array();\n" .
-                "  var _qfGroups = {};\n" .
-                "  _qfMsg = '';\n\n" .
-                join("\n", $test) .
-                "\n  if (_qfMsg != '') {\n" .
-                "    _qfMsg = '" . strtr($this->_jsPrefix, $js_escape) . "' + _qfMsg;\n" .
-                "    _qfMsg = _qfMsg + '\\n" . strtr($this->_jsPostfix, $js_escape) . "';\n" .
-                "    alert(_qfMsg);\n" .
-                "    return false;\n" .
-                "  }\n" .
-                "  return true;\n" .
-                "}\n" .
-                "//]]>\n" .
-                "</script>";
-        }*/
         return '';
     }
 
@@ -471,66 +388,17 @@ class QuickFormPHP7
         if (isset($this->elements[$name])) {
             if (isset($this->elements[$name]['attributes']) && is_array($this->elements[$name]['attributes'])) {
 
-                if (isset($attributes['value'])) {
-                    $this->elements[$name]['value'] = $attributes['value'];
-                    unset($attributes['value']);
-                }
+                foreach ($attributes as $key => $value) {
+                    $this->elements[$name][$key] = $attributes[$key];
+                    unset($attributes[$key]);
 
-                if (isset($attributes['readonly'])) {
-                    $this->elements[$name]['attributes']['readonly'] = $attributes['readonly'];
-                    unset($attributes['readonly']);
-                }
-
-                if (isset($attributes['size'])) {
-                    $this->elements[$name]['attributes']['size'] = $attributes['size'];
-                    unset($attributes['size']);
-                }
-
-                if (isset($attributes['pattern'])) {
-                    $this->elements[$name]['attributes']['pattern'] = $attributes['pattern'];
-                    unset($attributes['pattern']);
-                }
-
-                if (isset($attributes['placeholder'])) {
-                    $this->elements[$name]['attributes']['placeholder'] = $attributes['placeholder'];
-                    unset($attributes['placeholder']);
-                }
-
-                if (isset($attributes['required'])) {
-                    $this->elements[$name]['required'] = $attributes['required'];
-                    unset($attributes['required']);
-                }
-
-                if (isset($attributes['error'])) {
-                    $this->elements[$name]['error'] = $attributes['error'];
-                    unset($attributes['error']);
-                }
-
-                if (isset($attributes['frozen'])) {
-                    $this->elements[$name]['frozen'] = $attributes['frozen'];
-                    unset($attributes['frozen']);
-                }
-
-                if (isset($attributes['html'])) {
-                    $this->elements[$name]['html'] = $attributes['html'];
-                    unset($attributes['html']);
-                }
-
-                if (isset($attributes['label'])) {
-                    $this->elements[$name]['label'] = $attributes['label'];
-                    unset($attributes['label']);
-                }
-
-                foreach ($attributes as $nameAttr => $value) {
-                    if (isset($this->elements[$name]['attributes'][$nameAttr])) {
-                        unset($this->elements[$name]['attributes'][$nameAttr]);
+                    if (isset($this->elements[$name]['attributes'][$key])) {
+                        unset($this->elements[$name]['attributes'][$key]);
                     }
-                    $this->elements[$name]['attributes'][$nameAttr] = $value;
+                    $this->elements[$name]['attributes'][$key] = $value;
                 }
-
             }
         }
-
     }
 
     /**
@@ -611,7 +479,6 @@ class QuickFormPHP7
      */
     public function exportValues()//TODO //:array
     {
-        //TODO: add values parser
         $values = array();
         foreach ($this->elements as $name => $attributes) {
             $values[$name] = isset($attributes['value']) ? $attributes['value'] : '';
@@ -646,13 +513,6 @@ class QuickFormPHP7
      */
     public function validate()//TODO //: bool
     {
-        //TODO: create validation
-//        foreach ($this->elements as $name => $element) {
-//            $res = QuickFormElementPHP7::validate($element);
-//            if(!$res){
-//                return false;
-//            }
-//        }
         $result = true;
         return $result;
     }
@@ -812,6 +672,9 @@ class QuickFormPHP7
         return $this->templates;
     }
 
+    /**
+     *
+     */
     public function clearAllTemplates()
     {
         $this->setTemplates([]);
@@ -1037,11 +900,11 @@ class QuickFormPHP7
             unset($this->elements[$nameOfNewElement]);
         }
 
+        $this->setHtml($elementArray[$nameOfNewElement][self::HTML]);
+
         $array = array_slice($this->getElements(), 0, $position) + $elementArray + array_slice($this->getElements(), $position);
 
         $this->setElements($array);
-
-        $this->reGenerateHtml();
     }
 
     /**
@@ -1111,25 +974,5 @@ class QuickFormPHP7
     public function setTarget($target)
     {
         $this->target = $target;
-    }
-
-    /**
-     * Regenerating of HTML of form in case of changing order of elements in form
-     */
-    private function reGenerateHtml()
-    {
-        $this->resetHtml();
-
-        foreach($this->getElements() as $key => $element){
-            $this->setHtml($element['html']);
-        }
-    }
-
-    /**
-     * Reset html value to empty string
-     */
-    private function resetHtml()
-    {
-        $this->html = '';
     }
 }
